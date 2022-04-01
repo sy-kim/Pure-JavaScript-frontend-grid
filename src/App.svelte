@@ -1,7 +1,9 @@
 <script>
   import { innoGrid, ajax } from "./components/innogrid";
   import { Styles } from "sveltestrap";
-  import { Button, Col, Row } from "sveltestrap/src";
+  import { Button } from "sveltestrap/src";
+
+  import Dialog from "./components/Dialog";
 
   let domContainerState = false;
   window.addEventListener("DOMContentLoaded", (event) => {
@@ -79,7 +81,16 @@
           type: "checkBox",
           textAlign: "center",
           textColor: "red",
-          hide: true,
+          // hide: true,
+        },
+        {
+          header: "히든 테스트",
+          item: "hiddentest",
+          width: "100px",
+          type: "text",
+          textAlign: "center",
+          textColor: "black",
+          hide: false,
         },
       ],
     };
@@ -95,6 +106,7 @@
         team: "ICT 개발팀",
         counter: 123456778,
         checkbox: '<input type="checkbox" name="color" value="blue">체크</label>',
+        hiddentest: "display hidden test",
       },
       {
         index: 2,
@@ -107,6 +119,7 @@
         counter: 123456778,
         // 체크박스 타입을 지정하는것 TODO 작업해야함
         checkbox: '<input type="checkbox" name="color" value="blue">체크</label>',
+        hiddentest: "display hidden test",
       },
       {
         index: 3,
@@ -118,6 +131,7 @@
         team: "인사관리팀",
         counter: 123456778,
         checkbox: '<input type="checkbox" name="color" value="blue">체크</label>',
+        hiddentest: "display hidden test",
       },
       {
         index: 4,
@@ -128,6 +142,7 @@
         dept: "자원관리부",
         team: "자원분배-연습으로",
         counter: -123456778,
+        hiddentest: "display hidden test",
       },
       {
         index: 5,
@@ -223,6 +238,34 @@
 
     let table = document.getElementById("grid");
     innoGrid(table, gridData, gridConfiguration, true);
+    // grid end
+
+    // Dialog confirm button click event something TODO
+    let dialogConfirm = function (dialogObject) {
+      alert("dialogObject click :", dialogObject);
+      dialogObject.close();
+    };
+
+    // Dialog cacel button click event something TODO
+    let dialogCancel = function (dialogObject) {
+      console.log("Dialog cacel button event : ");
+      dialogObject.close();
+    };
+
+    let dialogConfig = {
+      container: "dialogContainer",
+      title: "다이얼로그 타이틀",
+      contents: `<h2>Test Contents</h2>
+                <p> 내용을 이렇게 사용할수 있으며 HTML tag 를 넣어서 사용할수있다</p>
+               `,
+      width: 600, // default width 600px
+      height: 200, // default height 200px
+      confirmButton: dialogConfirm,
+      cacelButton: dialogCancel,
+      showButton: document.getElementById("dialogButton"),
+    };
+
+    let dialog = new Dialog(dialogConfig);
   }
 </script>
 
@@ -240,44 +283,5 @@
 <br />
 <br />
 
-<!-- 간단한 양식을 포함한 팝업 대화 상자 -->
-<dialog id="favDialog">
-  <form method="dialog">
-    <p>
-      <label
-        >좋아하는 동물:
-        <select>
-          <option />
-          <option>아르테미아</option>
-          <option>레서판다</option>
-          <option>거미원숭이</option>
-        </select>
-      </label>
-    </p>
-    <menu>
-      <button value="cancel">취소</button>
-      <button id="confirmBtn" value="default">확인</button>
-    </menu>
-  </form>
-</dialog>
-
-<menu>
-  <button id="updateDetails">상세정보 업데이트</button>
-</menu>
-<output aria-live="polite" />
-<!-- <div>
-  <Button id="myBtn" primary>Open Modal</Button>
-</div>
-<div id="myModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p>Some text in the Modal..</p>
-  </div>
-</div>
-
-<Row>
-  <Col>
-    <Button color="primary" primary>Sample bootstrap button</Button>
-  </Col>
-</Row>
--->
+<div id="dialogContainer" />
+<button id="dialogButton" style="width:100px;">Show dialog</button>

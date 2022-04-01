@@ -78,57 +78,6 @@ Columns.prototype.sample = function (parameters) {
   return parameters;
 };
 
-export function testClass(table) {
-  console.log(table);
-  console.log("is Object ? : ", isObject(table));
-
-  let doc = document;
-  let number = 10;
-
-  console.log(Object.prototype.toString.call(table));
-
-  let inputElement = doc.createElement("input");
-
-  Object.assign(inputElement, {
-    id: "name",
-    type: "text",
-    value: "",
-    placeholder: "이름은 뭔가요?",
-    spellcheck: true,
-    autofocus: true,
-    onclick: function (event) {
-      //alert("onclick function");
-    },
-    onchange: function (event) {
-      console.log("onchange event", event);
-    },
-  });
-
-  document.body.appendChild(inputElement);
-
-  var favDialog = document.getElementById("favDialog");
-  var updateButton = document.getElementById("updateDetails");
-  var outputBox = document.getElementsByTagName("output")[0];
-
-  updateButton.addEventListener("click", function onOpen() {
-    if (typeof favDialog.showModal === "function") {
-      favDialog.showModal();
-    } else {
-      alert("The <dialog> API is not supported by this browser");
-    }
-  });
-
-  favDialog.addEventListener("close", function onClose() {
-    outputBox.value = favDialog.returnValue + " button clicked - " + new Date().toString();
-  });
-
-  let openFunction = function () {};
-
-  let closeFunction = function () {};
-
-  dialog(document, "default_dialog", openFunction, closeFunction);
-}
-
 export function innoGrid(table, rowData, gridConf, foot) {
   if (table === undefined) {
     console.error("Grid table is empty!");
@@ -183,11 +132,12 @@ export function innoGrid(table, rowData, gridConf, foot) {
       ? (th.style.width = processConfig.htMinWidth)
       : (th.style.width = headerElement.width);
 
+    th.innerText = headerElement.header;
+
     if (headerElement.hide) {
       th.style.display = "none";
     }
 
-    th.innerText = headerElement.header;
     tr.append(th);
 
     th.addEventListener("mouseover", function (event) {
@@ -258,54 +208,59 @@ export function innoGrid(table, rowData, gridConf, foot) {
     });
 
     processConfig.gridColumnDef.forEach((column) => {
-      let cell = row.insertCell();
-      cell.style.border = `1px solid ${processConfig.gridStyle.headerBorderColor}`;
+      /**
+       *
+       */
+      if (!column.hide) {
+        let cell = row.insertCell();
+        cell.style.border = `1px solid ${processConfig.gridStyle.headerBorderColor}`;
 
-      // cell item left and right padding (좌우 여백)
-      cell.style.paddingRight = "15px";
-      cell.style.paddingLeft = processConfig.paddingLeft;
-      // cell item left and right padding end
-      // Cell Item
-      let cellItem = document.createElement("div");
-      cellItem.style.marginLeft = "10px";
-      cellItem.style.fontSize = "14px";
+        // cell item left and right padding (좌우 여백)
+        cell.style.paddingRight = "15px";
+        cell.style.paddingLeft = processConfig.paddingLeft;
+        // cell item left and right padding end
+        // Cell Item
+        let cellItem = document.createElement("div");
+        cellItem.style.marginLeft = "10px";
+        cellItem.style.fontSize = "14px";
 
-      if (column.type !== undefined) {
-        switch (column.type) {
-          case "html":
-            cellItem.innerHTML = item[column.item];
-            break;
-          case "email":
-            cellItem.innerHTML = emailValidation(item[column.item]);
-            break;
-          case "phone":
-            cellItem.innerHTML = phoneNumberToStringFormat(item[column.item]);
-            break;
-          case "numberLocale":
-            cellItem.innerHTML = numberFormat(item[column.item]);
-            break;
-          case "text":
-            cellItem.innerText = item[column.item];
-            break;
-          case "string":
-            cellItem.innerText = item[column.item];
-            break;
-          default:
-            cellItem.innerHTML = item[column.item];
-            break;
+        if (column.type !== undefined) {
+          switch (column.type) {
+            case "html":
+              cellItem.innerHTML = item[column.item];
+              break;
+            case "email":
+              cellItem.innerHTML = emailValidation(item[column.item]);
+              break;
+            case "phone":
+              cellItem.innerHTML = phoneNumberToStringFormat(item[column.item]);
+              break;
+            case "numberLocale":
+              cellItem.innerHTML = numberFormat(item[column.item]);
+              break;
+            case "text":
+              cellItem.innerText = item[column.item];
+              break;
+            case "string":
+              cellItem.innerText = item[column.item];
+              break;
+            default:
+              cellItem.innerHTML = item[column.item];
+              break;
+          }
+        } else {
+          // column.type undefined
+          cellItem.innerHTML = item[column.item];
         }
-      } else {
-        // column.type undefined
-        cellItem.innerHTML = item[column.item];
+
+        column.textAlign === undefined
+          ? (cellItem.style.textAlign = processConfig.textAlign)
+          : (cellItem.style.textAlign = column.textAlign);
+
+        column.textColor === undefined ? (cellItem.style.color = "black") : (cellItem.style.color = column.textColor);
+
+        cell.appendChild(cellItem);
       }
-
-      column.textAlign === undefined
-        ? (cellItem.style.textAlign = processConfig.textAlign)
-        : (cellItem.style.textAlign = column.textAlign);
-
-      column.textColor === undefined ? (cellItem.style.color = "black") : (cellItem.style.color = column.textColor);
-
-      cell.appendChild(cellItem);
     });
   });
 
@@ -323,8 +278,6 @@ export function innoGrid(table, rowData, gridConf, foot) {
     paginator(paginatorConfig);
   }
   // paginator end
-
-  testClass(table);
 }
 
 class Grid {
@@ -336,10 +289,31 @@ class Grid {
 
   initial() {
     let NotoSansKRBlackFont = new FontFace("NotoSansKR-Regular", "url(fonts/NotoSansKR-Regular.otf)");
+    let NotoSansKRLightFont = new FontFace("NotoSansKR-Light", "url(fonts/NotoSansKR-Light.otf)");
+    let NotoSansKRMediumFont = new FontFace("NotoSansKR-Medium", "url(fonts/NotoSansKR-Medium.otf)");
+    // Font load
     NotoSansKRBlackFont.load()
       .then(function (loaded_face) {
         document.fonts.add(loaded_face);
-        document.body.style.fontFamily = '"NotoSansKR-Regular"';
+        // Font document.body set
+        document.body.style.fontFamily = '"NotoSansKR-Regular",Arial';
+      })
+      .catch(function (error) {
+        console.error("Font load error!");
+      });
+
+    NotoSansKRLightFont.load()
+      .then(function (loaded_face) {
+        document.fonts.add(loaded_face);
+        //document.body.style.fontFamily = '"NotoSansKR-Light"';
+      })
+      .catch(function (error) {
+        console.error("Font load error!");
+      });
+    NotoSansKRMediumFont.load()
+      .then(function (loaded_face) {
+        document.fonts.add(loaded_face);
+        // document.body.style.fontFamily = '"NotoSansKR-Medium"';
       })
       .catch(function (error) {
         console.error("Font load error!");
@@ -708,7 +682,7 @@ function paginator(config) {
     var select = document.createElement("select");
 
     select.style.fontSize = "14px";
-    select.style.height = "34px";
+    select.style.height = "30px";
 
     for (var i = 0; i < options.length; i++) {
       var option = document.createElement("option");
@@ -844,6 +818,12 @@ export function dialog(document, id, openFunction, closeFunction) {
     width: "200px",
     border: "1px solid red",
     innerHTML: "Cancel",
+  });
+
+  Object.assign(dialogFormMenu.style, {
+    float: "right",
+    right: "0px",
+    bottom: "0px",
   });
 
   dialogFormMenu.appendChild(dialogFormMenuCalcelButton);
