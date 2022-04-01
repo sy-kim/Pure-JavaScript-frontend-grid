@@ -1,3 +1,6 @@
+/**
+ * Create dialog function class
+ */
 export default class Dialog {
   constructor(config) {
     this.container = config.container;
@@ -18,8 +21,6 @@ export default class Dialog {
 
     container.className = "wrapper";
 
-    console.log("Container class Name = ", container.className);
-
     let dialogTitle = document.createElement("header");
     dialogTitle.innerText = this.title;
     dialogTitle.className = "header";
@@ -37,7 +38,6 @@ export default class Dialog {
     Object.assign(dialogFooterBox.style, {
       display: "flex",
       justifyContent: "flex-end",
-      //height: "32px",
       marginRight: "2px",
     });
 
@@ -51,6 +51,7 @@ export default class Dialog {
       innerText: "확인",
     });
 
+    // Dialog confirm button event listener
     dialogConfirmButton.addEventListener("click", () => {
       this.confirmButton(dialogTag);
     });
@@ -67,21 +68,27 @@ export default class Dialog {
       innerText: "취소",
     });
 
+    // Dialog cancel button event listener
     dialogCancelButton.addEventListener("click", () => {
       this.cacelButton(dialogTag);
     });
 
+    // Confirm button
     dialogFooterBox.appendChild(dialogConfirmButton);
+    // Cancel button
     dialogFooterBox.appendChild(dialogCancelButton);
-
+    // Footer box add childrens
     dialogFooter.appendChild(dialogFooterBox);
-
+    // Dialog title
     dialogTag.appendChild(dialogTitle);
+    // Dialog contents
     dialogTag.appendChild(dialogContents);
+    // Dialog footer
     dialogTag.appendChild(dialogFooter);
-
+    // Dialog container
     container.appendChild(dialogTag);
 
+    // Sample dialog show button
     this.showButton.addEventListener("click", function (event) {
       if (typeof dialogTag.showModal === "function") {
         dialogTag.showModal();
