@@ -1,7 +1,7 @@
 <script>
-  import { innoGrid, ajax } from "./components/innogrid";
-  import { Styles } from "sveltestrap";
+  import { innoGrid } from "./components/innogrid";
   import { Button } from "sveltestrap/src";
+  import { ajax, ajaxFetch } from "./components/ajax";
 
   import Dialog from "./components/Dialog";
 
@@ -10,6 +10,12 @@
     domContainerState = true;
     documentReady();
   });
+
+  function setTheme(themeName) {
+    localStorage.setItem("theme", themeName);
+    let documentElement = document.body;
+    documentElement.classList.toggle("dark");
+  }
 
   function documentReady() {
     const gridConfiguration = {
@@ -55,7 +61,7 @@
           sortable: true,
           filter: true,
         },
-        { header: "이메일", item: "email", width: "200px", type: "email", textAlign: "center", textColor: "block" },
+        { header: "이메일", item: "email", width: "200px", type: "email", textAlign: "center", textColor: "black" },
         {
           header: "전화번호",
           item: "phone",
@@ -238,6 +244,7 @@
 
     let table = document.getElementById("grid");
     innoGrid(table, gridData, gridConfiguration, true);
+
     // grid end
 
     // Dialog confirm button click event something TODO
@@ -266,6 +273,111 @@
     };
 
     let dialog = new Dialog(dialogConfig);
+
+    let themeSwitch = document.getElementById("switch");
+    themeSwitch.addEventListener("click", function () {
+      console.log("localStorage : ", localStorage.getItem("theme"));
+
+      if (localStorage.getItem("theme") === "dark") {
+        setTheme("light");
+      } else {
+        setTheme("dark");
+      }
+    });
+
+    // Example async await function
+
+    let url = "https://jsonplaceholder.typicode.com/users";
+    requestURL(url).then((data) => {
+      let getServerGridData = document.getElementById("getServerGridData");
+
+      const gridConfiguration = {
+        gridStyle: {
+          gridWidth: "100%", // default auto
+          headerHeight: "30px",
+          headerBorderColor: "#e5e6e9",
+          headerBackgroundColor: "#f8f9fb", // default header background color : "Gainsboro"
+          sort: true, // false is all row display
+          sortType: "asc", // asc or desc
+          pagination: true,
+          paginatorElement: document.getElementById("getServerGridData_paginator"),
+          search: true,
+          // searchElement: document.getElementById("gridSearch"),
+          searchPosition: "right",
+        },
+        gridColumnDef: [
+          {
+            header: "아이디",
+            item: "id",
+            width: "50px", // default min-size : 50
+            type: "number",
+            textAlign: "center",
+            textColor: "BlueViolet",
+            sortable: true,
+          },
+          {
+            header: "이름",
+            item: "name",
+            width: "50px", // default min-size : 50
+            type: "html",
+            textAlign: "left",
+            textColor: "BlueViolet",
+            sortable: true,
+          },
+          {
+            header: "FirstName",
+            item: "username",
+            width: "50px", // default min-size : 50
+            type: "html",
+            textAlign: "left",
+            textColor: "BlueViolet",
+          },
+          {
+            header: "이메일",
+            item: "email",
+            width: "150px", // default min-size : 50
+            type: "email",
+            textAlign: "left",
+            textColor: "black",
+          },
+          {
+            header: "전화번호",
+            item: "phone",
+            width: "150px", // default min-size : 50
+            type: "text",
+            textAlign: "right",
+            textColor: "black",
+          },
+          {
+            header: "WebSite",
+            item: "website",
+            width: "250px", // default min-size : 50
+            type: "html",
+            textAlign: "left",
+            textColor: "BlueViolet",
+          },
+          {
+            header: "주소",
+            item: {
+              masterKey: "address",
+              displayItem: ["city", "street", "zipcode"],
+            },
+            width: "250px", // default min-size : 50
+            type: "sample",
+            textAlign: "left",
+            textColor: "BlueViolet",
+          },
+        ],
+      };
+
+      innoGrid(getServerGridData, data, gridConfiguration, true);
+    });
+  }
+
+  async function requestURL(url) {
+    let response = await fetch(url);
+    let resultData = await response.json();
+    return resultData;
   }
 </script>
 
@@ -284,4 +396,14 @@
 <br />
 
 <div id="dialogContainer" />
+
 <button id="dialogButton" style="width:100px;">Show dialog</button>
+
+<h1>Theme Switcher</h1>
+<button id="switch" style="width:100px;"> Theme select</button>
+
+<div style="width:80%;">
+  <!-- <div id="getServerGridData" /> -->
+  <table id="getServerGridData" style="border-collapse:collapse;" />
+  <div id="getServerGridData_paginator" />
+</div>

@@ -54,8 +54,7 @@
 }
 
 
-
-
+/* Button */
 button {
     color: #fff;
     width: 60px;
@@ -69,9 +68,58 @@ button:hover {
     color: #fff;
     background-color: #00b3db;
     border-color: #285e8e;
-    /*set the color you want here*/
 }
 
-select {
-    height: 30px;
+
+
+/*  Table  */
+.table-sorter-normal::after {
+    float: right;
+    margin-right: 5px;
+    content: "\25AA";
+}
+
+.asc-table-sorter::after {
+    float: right;
+    margin-right: 5px;
+    content: "\25BE";
+}
+
+.desc-table-sorter::after {
+    float: right;
+    margin-right: 5px;
+    content: "\25B4";
+}
+
+
+/* Theme style*/
+
+.dark {
+    background-color: rgb(58, 56, 56);
+}
+
+.dark>button {
+    background-color: #ff5564;
+}
+
+.dark>button:hover {
+    background-color: #f18d95;
+}
+
+.dark>h1 {
+    color: white;
+}
+
+.dark>h2 {
+    color: white;
+}
+
+.dark>div>h2 {
+    color: white;
+}
+
+
+
+.light {
+    background-color: gray;
 }

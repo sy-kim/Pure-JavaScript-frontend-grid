@@ -1,3 +1,7 @@
+/**
+ * innogrid table grid project
+ */
+
 import { numberFormat, phoneNumberToStringFormat, emailValidation, elementValidationCheck } from "./utils";
 import { resizableGrid } from "./resizableTable";
 import { sortTable } from "./sortTable";
@@ -55,27 +59,31 @@ var isObject = function (val) {
   return Object.prototype.toString.call(val) === "[object Object]";
 };
 
-class Columns {
-  constructor(name, phone, address) {
-    this.name = name;
-    this.phone = phone;
-    this.address = address;
-    return this;
-  }
-
-  smaple() {
-    return "return sample function value";
-  }
-}
-
-Columns.prototype.swap = function (columns) {
-  // Get the current column indexs
-  console.log("This dt headings : ", columns + " this.dt = ", this);
-  return columns;
-};
-
-Columns.prototype.sample = function (parameters) {
-  return parameters;
+var classList = {
+  add: function (s, a) {
+    if (s.classList) {
+      s.classList.add(a);
+    } else {
+      if (!classList.contains(s, a)) {
+        s.className = s.className.trim() + " " + a;
+      }
+    }
+  },
+  remove: function (s, a) {
+    if (s.classList) {
+      s.classList.remove(a);
+    } else {
+      if (classList.contains(s, a)) {
+        s.className = s.className.replace(new RegExp("(^|\\s)" + a.split(" ").join("|") + "(\\s|$)", "gi"), " ");
+      }
+    }
+  },
+  contains: function (s, a) {
+    if (s)
+      return s.classList
+        ? s.classList.contains(a)
+        : !!s.className && !!s.className.match(new RegExp("(\\s|^)" + a + "(\\s|$)"));
+  },
 };
 
 export function innoGrid(table, rowData, gridConf, foot) {
@@ -132,6 +140,10 @@ export function innoGrid(table, rowData, gridConf, foot) {
       ? (th.style.width = processConfig.htMinWidth)
       : (th.style.width = headerElement.width);
 
+    if (headerElement.sortable !== undefined || headerElement.sortable) {
+      th.className = "table-sorter-normal";
+    }
+
     th.innerText = headerElement.header;
 
     if (headerElement.hide) {
@@ -157,12 +169,15 @@ export function innoGrid(table, rowData, gridConf, foot) {
         switch (processConfig.sortDirectionAsc) {
           case true:
             sortDirection = "asc";
+            th.className = "asc-table-sorter";
             break;
           case false:
             sortDirection = "desc";
+            th.className = "desc-table-sorter";
             break;
           default:
             sortDirection = "";
+            th.className = "table-sorter-normal";
             break;
         }
 
@@ -183,7 +198,11 @@ export function innoGrid(table, rowData, gridConf, foot) {
 
   let tBody = document.createElement("TBODY");
 
-  rowData.forEach((item) => {
+  rowData.forEach((rowElement) => {
+    /**
+     * table row data loop
+     */
+
     let row = document.createElement("TR");
     row.style.userSelect = "none";
     row.style.whiteSpace = "nowrap";
@@ -208,9 +227,6 @@ export function innoGrid(table, rowData, gridConf, foot) {
     });
 
     processConfig.gridColumnDef.forEach((column) => {
-      /**
-       *
-       */
       if (!column.hide) {
         let cell = row.insertCell();
         cell.style.border = `1px solid ${processConfig.gridStyle.headerBorderColor}`;
@@ -227,30 +243,48 @@ export function innoGrid(table, rowData, gridConf, foot) {
         if (column.type !== undefined) {
           switch (column.type) {
             case "html":
-              cellItem.innerHTML = item[column.item];
+              cellItem.innerHTML = rowElement[column.item];
+              break;
+            case "sample":
+              /*
+              console.log("원천데이터 : ", rowElement);
+              console.log("키 데이터 : ", column.item);
+              
+              
+              let keys = column.item.split(".");
+
+              console.log("keys : ", keys);
+              console.log(rowElement);
+              let obj = rowElement;
+              keys.forEach((key) => {
+                obj = obj[key];
+              });
+              console.log(obj); */
+
+              //cellItem.innerHTML = rowElement[column.item];
               break;
             case "email":
-              cellItem.innerHTML = emailValidation(item[column.item]);
+              cellItem.innerHTML = emailValidation(rowElement[column.item]);
               break;
             case "phone":
-              cellItem.innerHTML = phoneNumberToStringFormat(item[column.item]);
+              cellItem.innerHTML = phoneNumberToStringFormat(rowElement[column.item]);
               break;
             case "numberLocale":
-              cellItem.innerHTML = numberFormat(item[column.item]);
+              cellItem.innerHTML = numberFormat(rowElement[column.item]);
               break;
             case "text":
-              cellItem.innerText = item[column.item];
+              cellItem.innerText = rowElement[column.item];
               break;
             case "string":
-              cellItem.innerText = item[column.item];
+              cellItem.innerText = rowElement[column.item];
               break;
             default:
-              cellItem.innerHTML = item[column.item];
+              cellItem.innerHTML = rowElement[column.item];
               break;
           }
         } else {
           // column.type undefined
-          cellItem.innerHTML = item[column.item];
+          cellItem.innerHTML = rowElement[column.item];
         }
 
         column.textAlign === undefined
@@ -360,6 +394,10 @@ class Grid {
       searchBlock.appendChild(searchLabel);
       searchBlock.appendChild(searchCaretDownIcon);
     }
+
+    window.addEventListener
+      ? window.addEventListener("load", sortTable.init, false)
+      : window.attachEvent && window.attachEvent("onload", sortTable.init);
   }
 
   createHeader() {
@@ -371,18 +409,6 @@ class Grid {
     return this.rowData.length;
   }
 
-  showModal() {}
-
-  /**
-   * table sort
-   * @param {*} column
-   * @param {*} direction
-   * @param {*} initial
-   */
-  sort(column, direction, initial = false) {
-    this.sortColumn = gird.getCellIndex(column);
-  }
-
   /**
    * get th column index
    * @param {*} column
@@ -390,10 +416,6 @@ class Grid {
    */
   getCellIndex(column) {
     return column.cellIndex;
-  }
-
-  static init() {
-    alert("gird init");
   }
 }
 
@@ -409,10 +431,11 @@ function gridRowMouseOut(row) {
   row.style.border = "";
 }
 
+/*****************************************************
+ * Paginator Function                                *
+ *****************************************************/
 function paginator(config) {
-  /*****************************************************
-   * Paginator Function                                *
-   *****************************************************
+  /*
    * config : {
    *     get_rows : function used to select rows to do pagination on
    *         If no function is provided, checks for a config.table element and looks for rows in there to page
@@ -496,6 +519,7 @@ function paginator(config) {
       return trs;
     };
   }
+
   var get_rows = config.get_rows;
   var trs = get_rows();
 
@@ -753,103 +777,4 @@ export function merge(current, update) {
     }
   });
   return update;
-}
-
-export async function ajax(url, data) {
-  let response = await fetch(url, {
-    method: "GET", // *GET, POST, PUT, DELETE, etc
-    mode: "cors", // no-cors, *cors, same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: "same-origin", // include *same-origin, omit
-    headers: {
-      "Content-Type": "application/json",
-      // 'Content-Type': 'applcation/x-www-form-unlencoded',
-    },
-    redirect: "follow", // manual , * follow, error
-    referrerPolicy: "no-referrer",
-    // no-referrer, *no-referrer-when-downgrade, origin,
-    // origin-when-cross-orgin, same-origin, strict-origin,strict-origin-when-cross-origin, ussafe-url
-    body: JSON.stringify(data), // body data type must match 'Content-Type' header
-  });
-  return await response.json();
-}
-
-export function dialog(document, id, openFunction, closeFunction) {
-  const defaultDialog = {
-    id: "innogrid_dialog",
-  };
-
-  if (id === undefined || id === "") {
-    defaultDialog.id = dialogDefault.id;
-  }
-
-  let dialog = document.createElement("dialog");
-  let dialogForm = document.createElement("form");
-  let dialogFormMenu = document.createElement("menu");
-  let dialogFormMenuCalcelButton = document.createElement("button");
-  let dialogFormMenuConfirmButton = document.createElement("button");
-
-  let dialogInputSample = document.createElement("input");
-
-  dialog.style.width = "600px";
-  dialog.style.height = "400px";
-  dialog.style.border = "1px solid gray";
-
-  Object.assign(dialog, {
-    innerHTML: "프레임워크 다이얼로그를 어떻게 구성하는지 방법을 찾아보자",
-  });
-
-  Object.assign(dialogInputSample, {
-    id: "sampleDialogInput",
-    type: "text",
-    value: "sample Input",
-    placeholder: "이건 어떻게 하는지",
-  });
-
-  Object.assign(dialogFormMenuConfirmButton, {
-    id: "innogrid_dialog_menu_confirm",
-    value: "default",
-    innerHTML: "Confirm",
-  });
-
-  Object.assign(dialogFormMenuCalcelButton, {
-    value: "cancel",
-    color: "red",
-    width: "200px",
-    border: "1px solid red",
-    innerHTML: "Cancel",
-  });
-
-  Object.assign(dialogFormMenu.style, {
-    float: "right",
-    right: "0px",
-    bottom: "0px",
-  });
-
-  dialogFormMenu.appendChild(dialogFormMenuCalcelButton);
-  dialogFormMenu.appendChild(dialogFormMenuConfirmButton);
-
-  dialogForm.appendChild(dialogFormMenu);
-  dialogForm.appendChild(dialogInputSample);
-
-  dialog.appendChild(dialogForm);
-
-  document.body.appendChild(dialog);
-
-  let dialogShowButton = document.createElement("button");
-  Object.assign(dialogShowButton, {
-    width: "200px",
-    backgroundColor: "gray",
-    innerHTML: "다이알로그 ",
-  });
-
-  document.body.appendChild(dialogShowButton);
-
-  dialogShowButton.addEventListener("click", function onOpen() {
-    if (typeof dialog.showModal === "function") {
-      dialog.showModal();
-    } else {
-      alert("The <dialog> API is not supported by this browser");
-    }
-  });
 }

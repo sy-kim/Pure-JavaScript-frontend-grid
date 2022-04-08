@@ -32,17 +32,3 @@ export function elementValidationCheck(object) {
   if (object === undefined || object === "") return false;
   return true;
 }
-
-export default class Button {
-  constructor(id) {
-    this.id = id;
-  }
-
-  create() {
-    let button = document.createElement("button");
-    button.setAttribute("id", id);
-    button.style.width = "100px";
-    button.style.height = "100px";
-    return button;
-  }
-}

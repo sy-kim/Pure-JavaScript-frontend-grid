@@ -7,7 +7,16 @@
  * @param sorType This sorType is sort number and string compare
  * @returns void
  */
+
+let debugStatus = true;
+
 export function sortTable(Table, col, dir, sorType) {
+  if (debugStatus) {
+    console.log("Table : ", Table);
+    console.log("column : ", col);
+    console.log("direction : ", dir);
+    console.log("sort type : ", sorType);
+  }
   // type : number and string
   var sortClass, i;
 
@@ -15,7 +24,7 @@ export function sortTable(Table, col, dir, sorType) {
   sortTable.sortCol = -1;
 
   sortClass = Table.className.match(/js-sort-\d+/);
-
+  // sortClass not null
   if (null != sortClass) {
     sortTable.sortCol = sortClass[0].replace(/js-sort-/, "");
     Table.className = Table.className.replace(new RegExp(" ?" + sortClass[0] + "\\b"), "");
@@ -42,6 +51,10 @@ export function sortTable(Table, col, dir, sorType) {
   // update sort column
   Table.className += " js-sort-" + col;
   sortTable.sortCol = col;
+
+  /* Table.classList = 0: js-sort-2
+                       1: js-sort-desc
+  */
 
   // update sort direction
   Table.className += " js-sort-" + (sortTable.sortDir == -1 ? "desc" : "asc");
@@ -281,6 +294,7 @@ export function sortTable(Table, col, dir, sorType) {
     }
 
     // Add default styles as the first style in head so they can be easily overwritten by user styles
+    /*
     var element = document.createElement("style");
     document.head.insertBefore(element, document.head.childNodes[0]);
     var sheet = element.sheet;
@@ -292,6 +306,7 @@ export function sortTable(Table, col, dir, sorType) {
       'table.js-sort-table.js-sort-desc thead tr > .js-sort-active:not(.js-sort-none):after {content: "\\25bc";font-size: 0.7em;padding-left: 3px;line-height: 0.7em;}',
       0
     );
+    */
   };
 }
 // sort end
