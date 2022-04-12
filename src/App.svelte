@@ -13,8 +13,13 @@
 
   function setTheme(themeName) {
     localStorage.setItem("theme", themeName);
+
+    console.log("Theme : ", localStorage.getItem("theme"));
+
     let documentElement = document.body;
     documentElement.classList.toggle("dark");
+
+    console.log("ClassList : ", documentElement.classList);
   }
 
   function documentReady() {
@@ -309,7 +314,7 @@
           {
             header: "아이디",
             item: "id",
-            width: "50px", // default min-size : 50
+            width: "70px", // default min-size : 50
             type: "number",
             textAlign: "center",
             textColor: "BlueViolet",
@@ -359,11 +364,11 @@
           {
             header: "주소",
             item: {
-              masterKey: "address",
-              displayItem: ["city", "street", "zipcode"],
+              subKey: "address",
+              displayItems: ["street", "city", "zipcode"],
             },
             width: "250px", // default min-size : 50
-            type: "sample",
+            type: "address",
             textAlign: "left",
             textColor: "BlueViolet",
           },

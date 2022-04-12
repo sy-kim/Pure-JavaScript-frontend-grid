@@ -2,9 +2,9 @@
  * innogrid table grid project
  */
 
-import { numberFormat, phoneNumberToStringFormat, emailValidation, elementValidationCheck } from "./utils";
+import { sortTable, numberFormat, phoneNumberToStringFormat, emailValidation, elementValidationCheck } from "./utils";
 import { resizableGrid } from "./resizableTable";
-import { sortTable } from "./sortTable";
+
 /**
  * Genetate table
  * @param {*} table
@@ -57,33 +57,6 @@ var each = function (arr, fn, scope) {
 
 var isObject = function (val) {
   return Object.prototype.toString.call(val) === "[object Object]";
-};
-
-var classList = {
-  add: function (s, a) {
-    if (s.classList) {
-      s.classList.add(a);
-    } else {
-      if (!classList.contains(s, a)) {
-        s.className = s.className.trim() + " " + a;
-      }
-    }
-  },
-  remove: function (s, a) {
-    if (s.classList) {
-      s.classList.remove(a);
-    } else {
-      if (classList.contains(s, a)) {
-        s.className = s.className.replace(new RegExp("(^|\\s)" + a.split(" ").join("|") + "(\\s|$)", "gi"), " ");
-      }
-    }
-  },
-  contains: function (s, a) {
-    if (s)
-      return s.classList
-        ? s.classList.contains(a)
-        : !!s.className && !!s.className.match(new RegExp("(\\s|^)" + a + "(\\s|$)"));
-  },
 };
 
 export function innoGrid(table, rowData, gridConf, foot) {
@@ -191,6 +164,8 @@ export function innoGrid(table, rowData, gridConf, foot) {
               sortType = "string";
               break;
           }
+        //TODO
+        //sortTable(table, th.cellIndex, sortDirection, sortType);
         sortTable(table, th.cellIndex, sortDirection, sortType);
       }
     });
@@ -202,7 +177,6 @@ export function innoGrid(table, rowData, gridConf, foot) {
     /**
      * table row data loop
      */
-
     let row = document.createElement("TR");
     row.style.userSelect = "none";
     row.style.whiteSpace = "nowrap";
@@ -245,23 +219,14 @@ export function innoGrid(table, rowData, gridConf, foot) {
             case "html":
               cellItem.innerHTML = rowElement[column.item];
               break;
-            case "sample":
-              /*
-              console.log("원천데이터 : ", rowElement);
-              console.log("키 데이터 : ", column.item);
-              
-              
-              let keys = column.item.split(".");
-
-              console.log("keys : ", keys);
-              console.log(rowElement);
-              let obj = rowElement;
-              keys.forEach((key) => {
-                obj = obj[key];
-              });
-              console.log(obj); */
-
-              //cellItem.innerHTML = rowElement[column.item];
+            case "address":
+              // 주소가 분리되어 있을때 사용하기 위한 방법
+              let subElment = rowElement[column.item.subKey];
+              let displayElements = subElment.street;
+              for (let i = 0; i < column.item.displayItems.length; i++) {
+                displayElements += subElment[column.item.displayItems[i]] + " ";
+              }
+              cellItem.innerHTML = displayElements;
               break;
             case "email":
               cellItem.innerHTML = emailValidation(rowElement[column.item]);

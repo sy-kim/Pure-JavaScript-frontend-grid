@@ -1,3 +1,23 @@
+:root {
+    --light: #ffffff;
+    --sky: #7f9cf5;
+    --purple: #97266d;
+    --dark: #81899b;
+
+
+    --back-color: #c3dafe;
+    --primary-color: #3c366b;
+    --header-back: #5f718d;
+    --header-text: #eee;
+
+}
+
+body {
+    background-color: var();
+}
+
+
+
 .wrapper {
     display: flex;
     flex-flow: row wrap;
@@ -105,19 +125,6 @@ button:hover {
 .dark>button:hover {
     background-color: #f18d95;
 }
-
-.dark>h1 {
-    color: white;
-}
-
-.dark>h2 {
-    color: white;
-}
-
-.dark>div>h2 {
-    color: white;
-}
-
 
 
 .light {
