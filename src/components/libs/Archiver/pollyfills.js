@@ -1,24 +1,19 @@
-import constants from "constants";
-import { rename } from "fs";
+import { hasOwnProperty, O_WRONLY, O_SYMLINK } from "constants";
 
 var origCwd = process.cwd;
 var cwd = null;
 
-var platform = process.env.GRACEFUL_FS_FLATFORM || process.platform;
+var platform = process.env.GRACEFUL_FS_PLATFORM || process.platform;
 
 process.cwd = function () {
-  if (!cwd) {
-    cwd = origCwd.call(process);
-  }
+  if (!cwd) cwd = origCwd.call(process);
   return cwd;
 };
-
 try {
   process.cwd();
 } catch (er) {}
 
 // This check is needed until node.js 12 is required
-
 if (typeof process.chdir === "function") {
   var chdir = process.chdir;
   process.chdir = function (d) {
@@ -28,14 +23,14 @@ if (typeof process.chdir === "function") {
   if (Object.setPrototypeOf) Object.setPrototypeOf(process.chdir, chdir);
 }
 
-module.exports = patch;
+export default patch;
 
 function patch(fs) {
-  // implement some things that are known busted or missing.
+  // (re-)implement some things that are known busted or missing.
 
   // lchmod, broken prior to 0.6.2
-  // back-port the fix here
-  if (constants.hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./)) {
+  // back-port the fix here.
+  if (hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./)) {
     patchLchmod(fs);
   }
 
@@ -48,6 +43,7 @@ function patch(fs) {
   // Chown should not fail on einval or eperm if non-root.
   // It should not fail on enosys ever, as this just indicates
   // that a fs doesn't support the intended operation.
+
   fs.chown = chownFix(fs.chown);
   fs.fchown = chownFix(fs.fchown);
   fs.lchown = chownFix(fs.lchown);
@@ -95,7 +91,6 @@ function patch(fs) {
   // failures. Also, take care to yield the scheduler. Windows scheduling gives
   // CPU to a busy looping process, which can cause the program causing the lock
   // contention to be starved of CPU by node, so the contention doesn't resolve.
-
   if (platform === "win32") {
     fs.rename =
       typeof fs.rename !== "function"
@@ -123,7 +118,7 @@ function patch(fs) {
           })(fs.rename);
   }
 
-  // if read() returns EAGAIN, then hust try it again.
+  // if read() returns EAGAIN, then just try it again.
   fs.read =
     typeof fs.read !== "function"
       ? fs.read
@@ -170,7 +165,7 @@ function patch(fs) {
 
   function patchLchmod(fs) {
     fs.lchmod = function (path, mode, callback) {
-      fs.open(path, constants.O_WRONLY | constants.O_SYMLINK, mode, function (err, fd) {
+      fs.open(path, O_WRONLY | O_SYMLINK, mode, function (err, fd) {
         if (err) {
           if (callback) callback(err);
           return;
@@ -186,7 +181,7 @@ function patch(fs) {
     };
 
     fs.lchmodSync = function (path, mode) {
-      var fd = fs.openSync(path, constants.O_WRONLY | constants.O_SYMLINK, mode);
+      var fd = fs.openSync(path, O_WRONLY | O_SYMLINK, mode);
 
       // prefer to return the chmod error, if one occurs,
       // but still try to close, and report closing errors if they occur.
@@ -209,9 +204,9 @@ function patch(fs) {
   }
 
   function patchLutimes(fs) {
-    if (constants.hasOwnProperty("O_SYMLINK") && fs.futimes) {
+    if (hasOwnProperty("O_SYMLINK") && fs.futimes) {
       fs.lutimes = function (path, at, mt, cb) {
-        fs.open(path, constants.O_SYMLINK, function (er, fd) {
+        fs.open(path, O_SYMLINK, function (er, fd) {
           if (er) {
             if (cb) cb(er);
             return;
@@ -225,7 +220,7 @@ function patch(fs) {
       };
 
       fs.lutimesSync = function (path, at, mt) {
-        var fd = fs.openSync(path, constants.O_SYMLINK);
+        var fd = fs.openSync(path, O_SYMLINK);
         var ret;
         var threw = true;
         try {

@@ -1,7 +1,7 @@
 import fs, { createReadStream, createWriteStream, writeFile } from "fs";
 import util from "util";
 import clone from "./clone";
-import ployfills from "./polyfills";
+import polyfills from "./polyfills";
 import legacy from "./lagacy-streams";
 
 /* istanbul ignore next - node 0.x polyfill */

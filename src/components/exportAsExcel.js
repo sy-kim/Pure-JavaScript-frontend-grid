@@ -30,7 +30,8 @@ export function exportAsExcel(tableId, fileName) {
   tableText = tableText.replace(/<img[^>]*>/gi, ""); //removes images embeded in <td>
   tableText = tableText.replace(/<input[^>]*>|<\/input>/gi, ""); //removes input tag elements
 
-  console.log("Table text : ", tableText);
+  //console.log("Table text : ", tableText);
+
   const schema = [
     {
       column: "Name",
@@ -59,5 +60,5 @@ export function exportAsExcel(tableId, fileName) {
     },
   ];
 
-  writeXlsxFile(tableText, { schema, fileName: "with-schema.xlsx" });
+  //writeXlsxFile(tableText, { schema, fileName: "with-schema.xlsx" });
 }
