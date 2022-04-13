@@ -4,6 +4,7 @@
 
 import { sortTable, numberFormat, phoneNumberToStringFormat, emailValidation, elementValidationCheck } from "./utils";
 import { resizableGrid } from "./resizableTable";
+import { exportAsExcel } from "./exportAsExcel";
 
 /**
  * Genetate table
@@ -360,9 +361,7 @@ class Grid {
       searchBlock.appendChild(searchCaretDownIcon);
     }
 
-    window.addEventListener
-      ? window.addEventListener("load", sortTable.init, false)
-      : window.attachEvent && window.attachEvent("onload", sortTable.init);
+    // Excel export function 기능 추가 부분
   }
 
   createHeader() {

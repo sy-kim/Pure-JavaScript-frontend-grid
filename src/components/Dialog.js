@@ -18,8 +18,7 @@ export default class Dialog {
   init() {
     let container = document.getElementById(this.container);
     let dialogTag = document.createElement("dialog");
-
-    container.className = "wrapper";
+    //container.className = "wrapper";
 
     let dialogTitle = document.createElement("header");
     dialogTitle.innerText = this.title;
@@ -42,10 +41,6 @@ export default class Dialog {
     });
 
     let dialogConfirmButton = document.createElement("button");
-    Object.assign(dialogConfirmButton.style, {
-      height: "30px",
-      marginTop: "2px",
-    });
     Object.assign(dialogConfirmButton, {
       id: "innogrid_dialog_confirm_button",
       innerText: "확인",
@@ -57,12 +52,6 @@ export default class Dialog {
     });
 
     let dialogCancelButton = document.createElement("button");
-    Object.assign(dialogCancelButton.style, {
-      height: "30px",
-      marginLeft: "2px",
-      marginTop: "2px",
-      backgroundColor: "gray",
-    });
     Object.assign(dialogCancelButton, {
       id: "innogrid_dialog_confirm_button",
       innerText: "취소",

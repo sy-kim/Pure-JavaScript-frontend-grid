@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@rollup/plugin-replace": "^4.0.0",
+    "exceljs": "^4.3.0",
+    "readdir-glob": "^1.1.1",
     "sirv-cli": "^2.0.0",
     "sveltestrap": "^5.9.0"
   }

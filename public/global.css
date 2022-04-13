@@ -12,9 +12,6 @@
 
 }
 
-body {
-    background-color: var();
-}
 
 
 
@@ -33,8 +30,13 @@ body {
     background: tomato;
 }
 
-.footer {
-    background: lightgreen;
+.footer {}
+
+
+dialog {
+    border-width: 1px;
+    border-radius: 3px 3px 3px 3px;
+
 }
 
 /* We rely on source order for mobile-first approach

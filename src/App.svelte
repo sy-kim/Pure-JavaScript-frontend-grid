@@ -2,6 +2,7 @@
   import { innoGrid } from "./components/innogrid";
   import { Button } from "sveltestrap/src";
   import { ajax, ajaxFetch } from "./components/ajax";
+  import { exportAsExcel } from "./components/exportAsExcel";
 
   import Dialog from "./components/Dialog";
 
@@ -36,6 +37,7 @@
         search: true,
         searchElement: document.getElementById("gridSearch"),
         searchPosition: "right",
+        excelExport: true,
       },
       gridColumnDef: [
         {
@@ -377,6 +379,13 @@
 
       innoGrid(getServerGridData, data, gridConfiguration, true);
     });
+
+    // Excel export test
+    let excelExportButton = document.getElementById("excelExportButton");
+
+    excelExportButton.addEventListener("click", function (event) {
+      exportAsExcel("getServerGridData", "sample.xsl");
+    });
   }
 
   async function requestURL(url) {
@@ -411,4 +420,8 @@
   <!-- <div id="getServerGridData" /> -->
   <table id="getServerGridData" style="border-collapse:collapse;" />
   <div id="getServerGridData_paginator" />
+</div>
+
+<div>
+  <button id="excelExportButton" style="width:150px;">Excel export test</button>
 </div>
