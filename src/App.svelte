@@ -382,7 +382,7 @@
     let excelExportButton = document.getElementById("excelExportButton");
 
     excelExportButton.addEventListener("click", function (event) {
-      //fs.readFile("./main.js", (err, data) => {});
+      alert("Excel export button click !");
     });
   }
 
