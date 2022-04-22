@@ -2,8 +2,6 @@
   import { innoGrid } from "./components/innogrid";
   import { Button } from "sveltestrap/src";
   import { ajax, ajaxFetch } from "./components/ajax";
-  import { exportAsExcel } from "./components/exportAsExcel";
-
   import Dialog from "./components/Dialog";
 
   let domContainerState = false;
@@ -384,7 +382,7 @@
     let excelExportButton = document.getElementById("excelExportButton");
 
     excelExportButton.addEventListener("click", function (event) {
-      exportAsExcel("getServerGridData", "sample.xsl");
+      //fs.readFile("./main.js", (err, data) => {});
     });
   }
 

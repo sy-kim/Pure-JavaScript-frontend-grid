@@ -1,7 +1,7 @@
-import fs, { createReadStream, createWriteStream, writeFile } from "fs";
+import fs from "fs";
 import util from "util";
 import clone from "./clone";
-import polyfills from "./polyfills";
+import polyfills from "./pollyfills";
 import legacy from "./lagacy-streams";
 
 /* istanbul ignore next - node 0.x polyfill */
@@ -90,11 +90,7 @@ if (!global[gracefulQueue]) {
   publishQueue(global, fs[gracefulQueue]);
 }
 
-module.exports = patch(clone(fs));
-if (process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !fs.__patched) {
-  module.exports = patch(fs);
-  fs.__patched = true;
-}
+export default patch;
 
 function patch(fs) {
   // Everything that references the open() function needs to be in here
@@ -269,9 +265,11 @@ function patch(fs) {
     configurable: true,
   });
 
-  function ReadStream(path, options) {
-    if (this instanceof ReadStream) return fs$ReadStream.apply(this, arguments), this;
-    else return ReadStream.apply(Object.create(ReadStream.prototype), arguments);
+  class ReadStream {
+    constructor(path, options) {
+      if (this instanceof ReadStream) return fs$ReadStream.apply(this, arguments), this;
+      else return ReadStream.apply(Object.create(ReadStream.prototype), arguments);
+    }
   }
 
   function ReadStream$open() {
@@ -289,9 +287,11 @@ function patch(fs) {
     });
   }
 
-  function WriteStream(path, options) {
-    if (this instanceof WriteStream) return fs$WriteStream.apply(this, arguments), this;
-    else return WriteStream.apply(Object.create(WriteStream.prototype), arguments);
+  class WriteStream {
+    constructor(path, options) {
+      if (this instanceof WriteStream) return fs$WriteStream.apply(this, arguments), this;
+      else return WriteStream.apply(Object.create(WriteStream.prototype), arguments);
+    }
   }
 
   function WriteStream$open() {

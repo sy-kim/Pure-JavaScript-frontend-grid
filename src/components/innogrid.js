@@ -4,7 +4,6 @@
 
 import { sortTable, numberFormat, phoneNumberToStringFormat, emailValidation, elementValidationCheck } from "./utils";
 import { resizableGrid } from "./resizableTable";
-import { exportAsExcel } from "./exportAsExcel";
 
 /**
  * Genetate table
