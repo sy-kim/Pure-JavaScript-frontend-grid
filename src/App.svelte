@@ -45,6 +45,7 @@
           type: "html",
           textAlign: "center",
           textColor: "BlueViolet",
+          sortable: true,
         },
         {
           header: "이름",
@@ -254,13 +255,13 @@
 
     // Dialog confirm button click event something TODO
     let dialogConfirm = function (dialogObject) {
-      alert("dialogObject click :", dialogObject);
+      alert("dialogConfirm click :", dialogObject);
       dialogObject.close();
     };
 
     // Dialog cacel button click event something TODO
     let dialogCancel = function (dialogObject) {
-      console.log("Dialog cacel button event : ");
+      alert("dialogCancel click :", dialogObject);
       dialogObject.close();
     };
 
@@ -271,7 +272,7 @@
                 <p> 내용을 이렇게 사용할수 있으며 HTML tag 를 넣어서 사용할수있다</p>
                `,
       width: 600, // default width 600px
-      height: 200, // default height 200px
+      height: 300, // default height 200px
       confirmButton: dialogConfirm,
       cacelButton: dialogCancel,
       showButton: document.getElementById("dialogButton"),
@@ -293,6 +294,7 @@
     // Example async await function
 
     let url = "https://jsonplaceholder.typicode.com/users";
+
     requestURL(url).then((data) => {
       let getServerGridData = document.getElementById("getServerGridData");
 
@@ -391,6 +393,70 @@
     let resultData = await response.json();
     return resultData;
   }
+
+  // Example POST method implemention
+  async function requestPost(url = "", data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      // *GET, POST, PUT, DELETE, etc.
+      method: "POST",
+      // no-cors, *cors, same-origon
+      mode: "cors",
+      // *default, no-cache, reload, force-cache, only-if-cached
+      cache: "no-cache",
+      // include, *same-origin, omit
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      // manual, *follow, error
+      redirect: "follow",
+
+      // no-referer, *no-referer-when-downgrade, origin,
+      // origin-when-cross-origin, same-origin, strict-origin-when-cross-origin,
+      // unsafe-url
+      referrerPolicy: "no-referrer",
+      // body data type must match 'Content-Type' header
+      body: JSON.stringify(data),
+    });
+    // parses JSON response into native JavaScript objects
+    return response.json();
+  }
+
+  // Uploading a file
+  // Files can be uploaded using an HTML <input type="file" /> input element, FormData() and fetch().
+
+  requestURL("http://localhost:9000/login", {
+    method: "POST",
+    body: JSON.stringify({
+      username: "admin",
+      password: "1234",
+    }),
+    // mode: 'cors', // no-cors, *cors, same-origin
+    mode: "no-cors",
+    headers: {
+      // "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    redirect: "follow", // manual, *follow, error
+  })
+    .then((response) => {
+      console.log("Response datga : ", response.text());
+    })
+    .then((data) => {
+      if (data.status === "success") {
+        console.log(data.message);
+      } else {
+        console.log("something went wrong ");
+      }
+
+      console.log("------------- redirection ----------------");
+      window.location.replace(data);
+    })
+    .catch((error) => {
+      console.log("Response error : ", error);
+    });
 </script>
 
 <!-- <Styles /> -->
@@ -422,4 +488,8 @@
 
 <div>
   <button id="excelExportButton" style="width:150px;">Excel export test</button>
+</div>
+
+<div>
+  <input type="file" />
 </div>

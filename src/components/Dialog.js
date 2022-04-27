@@ -6,8 +6,10 @@ export default class Dialog {
     this.container = config.container;
     this.title = config.title;
     this.contents = config.contents;
+
     this.confirmButton = config.confirmButton;
     this.cacelButton = config.cacelButton;
+
     this.width = config.width;
     this.height = config.height;
     this.showButton = config.showButton;
@@ -17,10 +19,18 @@ export default class Dialog {
 
   init() {
     let container = document.getElementById(this.container);
+
     let dialogTag = document.createElement("dialog");
+    dialogTag.style.borderColor = "gray";
+    dialogTag.style.borderWidth = "0 3px 5px 0";
+    dialogTag.style.borderRadius = "4px 4px 4px 4px";
+    dialogTag.style.width = this.width + "px";
+    dialogTag.style.height = this.height + "px";
+
     //container.className = "wrapper";
 
     let dialogTitle = document.createElement("header");
+
     dialogTitle.innerText = this.title;
     dialogTitle.className = "header";
 
@@ -31,16 +41,24 @@ export default class Dialog {
     });
 
     let dialogFooter = document.createElement("footer");
+
     dialogFooter.className = "footer";
 
     let dialogFooterBox = document.createElement("div");
     Object.assign(dialogFooterBox.style, {
       display: "flex",
       justifyContent: "flex-end",
-      marginRight: "2px",
+      position: "absolute",
+      bottom: "4px",
+      right: "4px",
     });
 
     let dialogConfirmButton = document.createElement("button");
+    Object.assign(dialogConfirmButton.style, {
+      width: "60px",
+      marginRight: "2px",
+    });
+
     Object.assign(dialogConfirmButton, {
       id: "innogrid_dialog_confirm_button",
       innerText: "확인",
@@ -52,6 +70,11 @@ export default class Dialog {
     });
 
     let dialogCancelButton = document.createElement("button");
+    Object.assign(dialogCancelButton.style, {
+      width: "60px",
+      marginRight: "10px",
+      marginBottom: "10px",
+    });
     Object.assign(dialogCancelButton, {
       id: "innogrid_dialog_confirm_button",
       innerText: "취소",
